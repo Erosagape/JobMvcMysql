@@ -1,0 +1,32 @@
+﻿@using JobMvcMysql
+@model List<JobMvcMysql.Country>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+		<table id="tb">
+			<thead>
+				<td>oid</td>
+				<td>code</td>
+				<td>name</td>
+			</thead>
+			<tbody>
+				@foreach(var item in Model)
+				{
+				<tr>
+					<td>@item.oid</td>
+					<td>@item.countryCode</td>
+					<td>@item.countryName</td>
+				</tr>
+				}
+			</tbody>
+		</table>
+</body>
+</html>
+
+
