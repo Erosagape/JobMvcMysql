@@ -9,11 +9,12 @@ namespace JobMvcMysql
 		{
 			try
 			{
-				using (MySqlConnection cn = new MySqlConnection("server=182.50.133.78;uid=mvc_test;pwd=test_mvc;database=mvc_test;port=3306;"))
+				using (Connection cn=new Connection())
 				{
-					cn.Open();
-					label1.Text = "Connected!";
-					Response.Redirect("/CustomsFile");
+					if (cn.State == true)
+					{
+						Response.Redirect("/CustomsFile/Country");
+					}
 				}
 			}
 			catch (Exception e)

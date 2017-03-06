@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using MySql.Data.MySqlClient;
-using System.Collections.Generic;
 namespace JobMvcMysql
 {
 	public class Connection : IDisposable
@@ -14,7 +13,7 @@ namespace JobMvcMysql
 			State = false;
 			try
 			{
-				cn = new MySqlConnection("server=182.50.133.78;uid=mvc_test;pwd=test_mvc;database=mvc_test;port=3306;");
+				cn = new MySqlConnection("server=182.50.133.78;uid=mvc_test;pwd=test_mvc;database=mvc_test;port=3306;CharSet=utf8;");
 				cn.Open();
 				State = true;
 			}
@@ -23,21 +22,31 @@ namespace JobMvcMysql
 				Message = e.Message;
 			}
 		}
-		public List<Country> getCountry_all()
+		public MySqlConnection getConnection() 
 		{
-			MySqlDataReader rd = new MySqlCommand("select * from Country", cn).ExecuteReader();
-			List<Country> rows = new List<Country>();
-			while (rd.Read())
-			{
-				rows.Add(new Country() 
-				{
-					oid=rd.GetInt32("oid"),
-					countryCode =rd.GetString("countryCode"),
-					countryName =rd.GetString("countryName")
-				});
-			}
-			return rows;
+			return cn;
 		}
+		public bool ExecuteSQL(string sqlcmd)
+		{
+			try
+			{
+				MySqlCommand cm = new MySqlCommand(sqlcmd, cn);
+				cm.CommandType = CommandType.Text;
+				cm.ExecuteNonQuery();
+				return true;
+			}
+			catch(Exception e)
+			{
+				Message = e.Message;
+				return false;
+			}
+		}
+		public MySqlDataReader getDataReader(string sqlcmd) 
+		{ 
+			MySqlDataReader rd = new MySqlCommand(sqlcmd, cn).ExecuteReader();
+			return rd;
+		}
+
 		public void Close()
 		{
 			if(cn.State.Equals(ConnectionState.Open)) cn.Close(); 
@@ -47,6 +56,32 @@ namespace JobMvcMysql
 		public void Dispose()
 		{
 			cn.Dispose();
+		}
+	}
+	public class MysqlDataTable : IDisposable
+	{
+		protected string cmd { get; set; }
+		protected MySqlDataAdapter da { get; set; }
+		protected MySqlCommandBuilder cmb { get; set; }
+		public DataTable data { get; set; }
+		public MysqlDataTable(string sqlcmd, MySqlConnection cn)
+		{
+			cmd = sqlcmd;
+
+			da = new MySqlDataAdapter(cmd, cn);
+			cmb = new MySqlCommandBuilder(da);
+			data = new DataTable();
+			da.Fill(data);
+		}
+		public int update()
+		{
+			return da.Update(data);
+		}
+		public void Dispose()
+		{
+			da.Dispose();
+			cmb.Dispose();
+			data.Dispose();
 		}
 	}
 }

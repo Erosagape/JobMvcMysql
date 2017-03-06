@@ -1,0 +1,131 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+		<title>@ViewBag.Title</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="/../Content/bootstrap.min.css">
+		<link rel="stylesheet" href="/../Scripts/DataTables/datatables.min.css"/>
+	    <script src="/../Scripts/DataTables/jQuery-2.2.4/jquery-2.2.4.min.js"></script>	
+	    <script src="/../Scripts/DataTables/datatables.min.js"></script>	
+		<script src="/../Scripts/bootstrap.js"></script>	
+		<script type="text/javascript">
+			function newData() {
+				$('#txtID').val('0');
+				$('#txtCode').val('');
+				$('#txtName').val('');
+
+				$('#lblHeader').text('Add Data');
+				$('#modalEditor').modal('show');
+			}
+			
+			function saveData(){
+			    var url='/CustomsFile/setCountry';
+				var data=getData();
+			
+				$.post(url,data)
+					.done(function(res){												
+						$('#modalEditor').modal('hide');			
+						loadGrid();
+						alert(res);
+				});
+			}
+
+			function getData(){
+				var obj={
+					oid:$('#txtID').val(),
+					countryCode: $('#txtCode').val(),
+					countryName: $('#txtName').val()
+				};
+				return obj;
+			}
+			
+			function showData(data) {
+				$('#txtID').val(data.oid);
+				$('#txtCode').val(data.countryCode);
+				$('#txtName').val(data.countryName);			
+
+				$('#lblHeader').text('Edit Data');
+				$('#modalEditor').modal('show');			
+			}
+			
+			function loadGrid(){			
+			    var table= $('#tbCountry').DataTable( {
+            		ajax: {
+                        url: "/CustomsFile/getCountry",
+                        dataSrc: ''
+            		},
+					selected:true,
+			        columns: [
+			            { data: "oid" },
+			            { data: "countryCode" },
+			            { data: "countryName" }
+			        ],
+					destroy:true
+			    });
+
+			    $('#tbCountry tbody').on('click', 'tr', function () {
+				    table.$('tr.selected').removeClass('selected');
+					$(this).addClass('selected');
+			
+			        var data = table.row(this).data();
+					showData(data);						
+			    } );
+			}
+			
+			$(document).ready(function() {
+				loadGrid();
+			});			
+		</script>
+</head>
+<body>
+		<h1>@ViewBag.Title</h1>
+		<button id="btnNew" class="btn btn-primary" onclick="newData()">Add New</button>
+		<table id="tbCountry" class="table table-responsive">
+			<thead>
+				<td>oid</td>
+				<td>code</td>
+				<td>name</td>
+			</thead>
+		</table>
+		<div id="modalEditor" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"></button>
+		        <h4 class="modal-title"><label id="lblHeader">Edit Data</label></h4>
+		      </div>
+		      <div class="modal-body">
+				<table>
+				<tr>
+					<td class="col-sm-2">
+						ID :
+						<input type="text" id="txtID" class="form-control" disabled/>									
+					</td>								
+					<td class="col-sm-2">
+						Code :
+						<input type="text" id="txtCode" class="form-control"/>
+					</td>
+					<td class="col-sm-6">
+						Name :
+						<input type="text" id="txtName" class="form-control"/>
+					</td>
+					<td class="col-sm-2">
+						<br/>
+						<button id="btnSave" class="btn btn-success" type="submit" value="submit" onclick="saveData()">Save</button>
+					</td>				
+				</tr>
+				</table>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+		      </div>
+		    </div>
+		  </div>			
+		</div>
+</body>
+</html>
+

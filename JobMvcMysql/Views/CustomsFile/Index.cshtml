@@ -6,10 +6,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>@ViewBag.Title</title>
+		<title>@ViewBag.Title</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="Content/bootstrap.min.css">
+		<script src="Scripts/jquery-3.1.1.min.js"></script>
+		<script src="Scripts/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			function SaveCountry(){
+				var obj={
+					oid:0,
+					countryCode: $('#txtCode').val(),
+					countryName: $('#txtName').val()
+				};
+				$.post('/CustomsFile/setCountry',obj)
+					.done(function(res){
+						alert(res);
+					});
+			}
+		</script>
 </head>
 <body>
-		<table id="tb">
+		<table id="tbCountry" class="table table-responsive">
 			<thead>
 				<td>oid</td>
 				<td>code</td>
@@ -25,6 +43,22 @@
 				</tr>
 				}
 			</tbody>
+		</table>
+		<table>
+			<tr>
+				<td>
+					Country Code :
+					<input type="text" id="txtCode" class="form-control"/>
+				</td>
+				<td>
+					Country Name :
+					<input type="text" id="txtName" class="form-control"/>
+				</td>
+				<td>
+					<br/>
+					<button id="btnSave" class="btn btn-danger" type="submit" value="submit" onclick="SaveCountry()">Save Country</button>
+				</td>				
+			</tr>
 		</table>
 </body>
 </html>
