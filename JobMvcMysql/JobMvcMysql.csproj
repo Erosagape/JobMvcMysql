@@ -193,6 +193,7 @@
     <Compile Include="Models\CustomsFiles.cs" />
     <Compile Include="DataLayer\Connection.cs" />
     <Compile Include="Controllers\CustomsFileController.cs" />
+    <Compile Include="Models\DecInvoice_Detail.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-3.1.1.slim.min.map" />
