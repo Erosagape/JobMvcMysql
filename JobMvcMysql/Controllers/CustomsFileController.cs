@@ -12,7 +12,7 @@ namespace JobMvcMysql.Controllers
         {
 			ViewBag.Title = "Country";
 			var data = new Country();
-			var model = data.getCountry_all().ToList();
+			var model = data.get().ToList();
 			return View(model);
         }
 		public ActionResult Country()
@@ -23,13 +23,64 @@ namespace JobMvcMysql.Controllers
 		public ActionResult getCountry()
 		{
 			var data = new Country();
-			var model = data.getCountry_all();
+			var model = data.get();
 			return Json(model.ToList(), JsonRequestBehavior.AllowGet);
 		}
 		public ActionResult setCountry(Country data) 
 		{
-			string msg =data.saveCountry();
+			string msg =data.save();
 			return Content(msg);
+		}
+		public ActionResult deleteCountry(int oid)
+		{
+			var data = new Country();
+			return Content(data.delete(oid));
+		}
+public ActionResult Currency()
+		{
+			ViewBag.Title = "Currency Management";
+			return View();
+		}
+		public ActionResult getCurrency()
+		{
+			var data = new Currency();
+			var model = data.get();
+			return Json(model.ToList(), JsonRequestBehavior.AllowGet);
+		}
+		public ActionResult setCurrency(Currency data)
+		{
+			string msg = data.save();
+			return Content(msg);
+		}
+		public ActionResult deleteCurrency(string oid)
+		{
+			var data = new Currency();
+			return Content(data.delete(oid));
+		}
+		public ActionResult InterPort()
+		{
+			ViewBag.Title = "InterPort Management";
+			return View();
+		}
+		public ActionResult getInterPort()
+		{
+			var data = new InterPort();
+			var model = data.get();
+			if (Request.QueryString["country"] != null)
+			{
+				model = model.Where(e => e.CountryCode.Equals(Request.QueryString["country"])).ToList();
+			}
+			return Json(model.ToList(), JsonRequestBehavior.AllowGet);
+		}
+		public ActionResult setInterPort(InterPort data)
+		{
+			string msg = data.save();
+			return Content(msg);
+		}
+		public ActionResult deleteInterPort(string oid)
+		{
+			var data = new InterPort();
+			return Content(data.delete(oid));
 		}
     }
 }

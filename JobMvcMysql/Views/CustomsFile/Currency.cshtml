@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Header = "ข้อมูลประเทศ";
+    ViewBag.Header = "ข้อมูลสกุลเงิน";
 }
 <!DOCTYPE html>
 <html>
@@ -16,12 +16,28 @@
     <script type="text/javascript">
         //กำหนดตัวแปรเก็บ path ของ web service ไว้ call ใน page นี้
         var path='@Url.Content("~")';
-        var urlSource = path+ 'CustomsFile/getCountry';
-        var urlSave = path+ 'CustomsFile/setCountry';
+        var urlSource = path+ 'CustomsFile/getCurrency';
+        var urlSave = path + 'CustomsFile/setCurrency';
+        var urlCountry = path + 'CustomsFile/getCountry';
         //Event ตอนเปิดเพจมาให้ load grid เลย
         $(document).ready(function () {
             showGrid();
+            loadCountry();
         });
+        //ฟังก์ชั่นสำหรับ load Country ลงใน dropdown
+        function loadCountry() {
+            $.get(urlCountry)
+                .done(function (data) {
+                    if (data.length > 0) {
+                        $('#selCountry').empty();
+                        for (var i = 0; i < data.length; i++) {
+                            $('#selCountry')
+                                .append($('<option>', { value: data[i].countryCode })
+                                .text(data[i].countryName));
+                        }
+                    }
+                });
+        }
         //ฟังก์ชั่นสำหรับ get ข้อมูลจาก web service มาแสดงผลใน table
         function showGrid() {
             var rowid = 0;
@@ -35,8 +51,9 @@
                 columns: [ //กำหนด property ของ header column
 			        { data: "oid", visible: false },
                     { data: null, title:"ลำดับที่" },
-			        { data: "countryCode", title: "รหัสประเทศ" },
-			        { data: "countryName", title: "ชื่อประเทศ" },
+			        { data: "CurrencyCode", title: "รหัสสกุลเงิน" },
+			        { data: "CurrencyName", title: "ชื่อสกุลเงิน" },
+                    { data: "CountryCode", title: "รหัสประเทศ" },
                     { data: null ,title:"แก้ไข" },
                     { data: null ,title:"แสดง" }
                 ],
@@ -50,7 +67,7 @@
                         }
                     },
                     {
-                        "targets": 4, //column ที่ 5 เพิ่มปุ่ม Edit ในแต่ละแถว ไว้แสดงข้อมูล
+                        "targets": 5,
                         "data": null,
                         "render": function (data, type, full, meta) {
                             var html = "<button id='btnEdit' class='btn btn-warning'>ID:" + data.oid + "</button>";
@@ -58,12 +75,12 @@
                         }
                     },
                     {
-                        "targets": 5, //column ที่ 6 เพิ่ม Dropdown Menu ไว้แสดงข้อมูลฟอร์ม popup อื่นๆ
+                        "targets": 6, 
                         "data": null,
                         "render": function (data, type, full, meta) {
                             var html = "<select id='selMenu' class='form-control dropdown'>";
-                            html += "<option value='0'>Currency</option>";
-                            html += "<option value='1'>Port</option></select>";
+                            html += "<option value='0'>Frieght</option>";
+                            html += "<option value='1'>Import-Export</option></select>";
                             return html;
                         }
                     },
@@ -84,7 +101,7 @@
             $('#tbl tbody').on('change', '#selMenu', function () {
                 var dt = getRowData('#tbl', this);
                 var val = $(this).val();
-                bootbox.alert('you select ' + val + ' of ' + dt.countryCode);
+                
             });
 
         }
@@ -103,24 +120,27 @@
             $('#txtID').val('0');
             $('#txtCode').val('');
             $('#txtName').val('');
+            $('#selCountry').val(-1);
             //เปลี่ยนค่า header หน้าจอ edit และแสดงผล
             showPopupEditor('Add Data', 'show');
         }
         //ฟังก์ชั่นสำหรับอ่านข้อมูลแล้วแสดงผลในหน้าจอ popup
         function loadData(data) {
             $('#txtID').val(data.oid);
-            $('#txtCode').val(data.countryCode);
-            $('#txtName').val(data.countryName);
+            $('#txtCode').val(data.CurrencyCode);
+            $('#txtName').val(data.CurrencyName);
+            $('#selCountry').val(data.CountryCode);
             //เปลี่ยนค่า header ของหน้าจอ edit แล้วโชว์ popup form
-            var str = 'Edit Data : ' + data.countryName + ' (' + data.countryCode + ')';
+            var str = 'Edit Data : ' + data.CurrencyName + ' (' + data.CurrencyCode + ')';
             showPopupEditor(str, 'show');
         }
 		//ฟังก์ชั่นสำหรับอ่านข้อมูลในหน้าจอ popup แล้ว convert เป็น class
 		function getEditorData() {
 		    var obj = {
 		        oid: $('#txtID').val(),
-		        countryCode: $('#txtCode').val(),
-		        countryName: $('#txtName').val()
+		        CurrencyCode: $('#txtCode').val(),
+		        CurrencyName: $('#txtName').val(),
+                CountryCode: $('#selCountry').val()
 		    };
 		    return obj;
 		}
@@ -148,6 +168,7 @@
                     <th>seq</th>
                     <th>code</th>
                     <th>name</th>
+                    <th>country</th>
                     <th>view</th>
                     <th>menu</th>
                 </tr>
@@ -165,15 +186,19 @@
                     <table>
                         <tr>
                             <td>
-                                <input type="text" id="txtID" class="form-control" style="display:none"/>
+                                <input type="text" id="txtID" class="form-control" style="display:none" />
                             </td>
                             <td class="col-sm-2">
                                 Code :
                                 <input type="text" id="txtCode" class="form-control" />
                             </td>
-                            <td class="col-sm-8">
+                            <td class="col-sm-4">
                                 Name :
                                 <input type="text" id="txtName" class="form-control" />
+                            </td>
+                            <td class="col-sm-8">
+                                Country :
+                                <select id="selCountry" class="form-control dropdown"></select>
                             </td>
                             <td class="col-sm-2">
                                 <br />

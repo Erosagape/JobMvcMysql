@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Header = "ข้อมูลประเทศ";
+    ViewBag.Header = "ข้อมูลท่าต่างประเทศ";
 }
 <!DOCTYPE html>
 <html>
@@ -16,29 +16,50 @@
     <script type="text/javascript">
         //กำหนดตัวแปรเก็บ path ของ web service ไว้ call ใน page นี้
         var path='@Url.Content("~")';
-        var urlSource = path+ 'CustomsFile/getCountry';
-        var urlSave = path+ 'CustomsFile/setCountry';
+        var urlSource = path+ 'CustomsFile/getInterPort';
+        var urlSave = path + 'CustomsFile/setInterPort';
+        var urlCountry = path + 'CustomsFile/getCountry';
         //Event ตอนเปิดเพจมาให้ load grid เลย
         $(document).ready(function () {
             showGrid();
+            loadCountry();
         });
+        //ฟังก์ชั่นสำหรับ load Country ลงใน dropdown
+        function loadCountry() {
+            $.get(urlCountry)
+                .done(function (data) {
+                    if (data.length > 0) {
+                        $('#selCountry').empty();
+                        for (var i = 0; i < data.length; i++) {
+                            $('#selCountry')
+                                .append($('<option>', { value: data[i].countryCode })
+                                .text(data[i].countryName));
+                        }
+                    }
+                });
+        }
         //ฟังก์ชั่นสำหรับ get ข้อมูลจาก web service มาแสดงผลใน table
         function showGrid() {
             var rowid = 0;
+            var country = $('#txtCountry').val();
+            var filter = '';
+            if (country != '') {
+                filter = '?country=' + country;
+            }
             //กำหนดค่า table grid
             $('#tbl').DataTable({
                 ajax: {
-                    url: urlSource, //web service ที่จะ call ไปดึงข้อมูลมา
+                    url: urlSource + filter, //web service ที่จะ call ไปดึงข้อมูลมา
                     dataSrc: ''
                 },
                 selected: true, //ให้สามารถเลือกแถวได้
                 columns: [ //กำหนด property ของ header column
 			        { data: "oid", visible: false },
                     { data: null, title:"ลำดับที่" },
-			        { data: "countryCode", title: "รหัสประเทศ" },
-			        { data: "countryName", title: "ชื่อประเทศ" },
-                    { data: null ,title:"แก้ไข" },
-                    { data: null ,title:"แสดง" }
+			        { data: "PortCode", title: "รหัสท่า" },
+			        { data: "PortName", title: "ชื่อท่าต่างประเทศ" },
+                    { data: "CountryCode", title: "รหัสประเทศ" },
+                    { data: null ,title:"แก้ไข" }
                 ],
                 "columnDefs": [ //กำหนด control เพิ่มเติมในแต่ละแถว
                     {
@@ -50,23 +71,13 @@
                         }
                     },
                     {
-                        "targets": 4, //column ที่ 5 เพิ่มปุ่ม Edit ในแต่ละแถว ไว้แสดงข้อมูล
+                        "targets": 5,
                         "data": null,
                         "render": function (data, type, full, meta) {
                             var html = "<button id='btnEdit' class='btn btn-warning'>ID:" + data.oid + "</button>";
                             return html;
                         }
-                    },
-                    {
-                        "targets": 5, //column ที่ 6 เพิ่ม Dropdown Menu ไว้แสดงข้อมูลฟอร์ม popup อื่นๆ
-                        "data": null,
-                        "render": function (data, type, full, meta) {
-                            var html = "<select id='selMenu' class='form-control dropdown'>";
-                            html += "<option value='0'>Currency</option>";
-                            html += "<option value='1'>Port</option></select>";
-                            return html;
-                        }
-                    },
+                    }
                 ],
                 destroy: true //ให้ล้างข้อมูลใหม่ทุกครั้งที่ reload page
             });
@@ -80,13 +91,6 @@
                 var dt = getRowData('#tbl', this);
                 loadData(dt);
             });
-            //กำหนด Event ให้เวลาเลือก Dropdown ให้ทำงานตามที่เลือก select ไว้
-            $('#tbl tbody').on('change', '#selMenu', function () {
-                var dt = getRowData('#tbl', this);
-                var val = $(this).val();
-                bootbox.alert('you select ' + val + ' of ' + dt.countryCode);
-            });
-
         }
         //ฟังก์ชั่นสำหรับ get ข้อมูลจาก row ปัจจุบัน ที่ user เลือกอยู่
         function getRowData(tb, e) {
@@ -103,26 +107,65 @@
             $('#txtID').val('0');
             $('#txtCode').val('');
             $('#txtName').val('');
+            $('#selCountry').val($('#txtCountry').val());
             //เปลี่ยนค่า header หน้าจอ edit และแสดงผล
             showPopupEditor('Add Data', 'show');
         }
         //ฟังก์ชั่นสำหรับอ่านข้อมูลแล้วแสดงผลในหน้าจอ popup
         function loadData(data) {
             $('#txtID').val(data.oid);
-            $('#txtCode').val(data.countryCode);
-            $('#txtName').val(data.countryName);
+            $('#txtCode').val(data.PortCode);
+            $('#txtName').val(data.PortName);
+            $('#selCountry').val(data.CountryCode);
             //เปลี่ยนค่า header ของหน้าจอ edit แล้วโชว์ popup form
-            var str = 'Edit Data : ' + data.countryName + ' (' + data.countryCode + ')';
+            var str = 'Edit Data : ' + data.CurrencyName + ' (' + data.CurrencyCode + ')';
             showPopupEditor(str, 'show');
         }
 		//ฟังก์ชั่นสำหรับอ่านข้อมูลในหน้าจอ popup แล้ว convert เป็น class
 		function getEditorData() {
 		    var obj = {
 		        oid: $('#txtID').val(),
-		        countryCode: $('#txtCode').val(),
-		        countryName: $('#txtName').val()
+		        PortCode: $('#txtCode').val(),
+		        PortName: $('#txtName').val(),
+                CountryCode: $('#selCountry').val()
 		    };
 		    return obj;
+		}
+		function searchData() {
+		    $('#tbLOV').DataTable({
+		        ajax: {
+		            url: urlCountry, //web service ที่จะ call ไปดึงข้อมูลมา
+		            dataSrc: ''
+		        },
+		        selected: true, //ให้สามารถเลือกแถวได้
+		        columns: [ //กำหนด property ของ header column
+                    { data: null ,title:"#"},
+                    { data: "countryCode", title: "รหัสประเทศ" },
+                    { data: "countryName", title: "ชื่อประเทศ" }
+		        ],
+		        "columnDefs": [ //กำหนด control เพิ่มเติมในแต่ละแถว
+                    {
+                        "targets": 0, //column ที่ 0 เป็นหมายเลขแถว
+                        "data": null,
+                        "render": function (data, type, full, meta) {
+                            var html = "<button class='btn btn-warning'>Select</button>";
+                            return html;
+                        }
+                    }
+		        ],
+		        destroy: true //ให้ล้างข้อมูลใหม่ทุกครั้งที่ reload page
+		    });
+		    $('#tbLOV tbody').on('click', 'tr', function () {
+		        $('#tbLOV tbody tr.selected').removeClass('selected'); //ล้างทุก row ที่มีการ select ก่อน
+		        $(this).addClass('selected'); //select row ใหม่
+		    });
+		    $('#tbLOV tbody').on('click', 'button', function () {
+		        var dt = getRowData('#tbLOV', this);
+		        $('#txtCountry').val(dt.countryCode);
+		        $('#modalSearch').modal('hide');
+		        showGrid();
+		    });
+		    $('#modalSearch').modal('show');
 		}
         //ฟังก์ชั่นสำหรับ post ข้อมูลไปยัง web service เพื่อ save
 		function saveData(){
@@ -140,19 +183,55 @@
 <body>
     <h1>@ViewBag.Header</h1>
     <div id="MainForm">
-        <button id="btnNew" class="btn btn-primary" onclick="newData()">Add New</button>
-        <table id="tbl" class="table table-responsive">
+        <table>
+            <tr>
+                <td>
+                    <input type="text" id="txtCountry" class="form-control" disabled />
+                </td>
+                <td>
+                    <button id="btnSearch" class="btn btn-default" onclick="searchData()">Browse Country</button>
+                </td>
+                <td>
+                    <button id="btnNew" class="btn btn-primary" onclick="newData()">Add New</button>
+                </td>
+            </tr>
+        </table>
+         <table id="tbl" class="table table-responsive">
             <thead>
                 <tr>
                     <th>oid</th>
                     <th>seq</th>
                     <th>code</th>
                     <th>name</th>
+                    <th>country</th>
                     <th>view</th>
-                    <th>menu</th>
                 </tr>
             </thead>
         </table>
+    </div>
+    <div id="modalSearch" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"></button>
+                    <h4 class="modal-title"><label id="lblHeader">Edit Data</label></h4>
+                </div>
+                <div class="modal-body">
+                    <table id="tbLOV" class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th>
+                                <th>code</th>
+                                <th>name</th>
+                            </tr>
+                        </thead>
+                    </table>                 
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="modalEditor" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -163,18 +242,30 @@
                 </div>
                 <div class="modal-body">
                     <table>
-                        <tr>
+                        <tr class="row">
                             <td>
-                                <input type="text" id="txtID" class="form-control" style="display:none"/>
+                                <input type="text" id="txtID" class="form-control" style="display:none" />
                             </td>
-                            <td class="col-sm-2">
-                                Code :
+                        </tr>
+                        <tr class="row">
+                            <td class="col-sm-3">
+                                Port Code :
                                 <input type="text" id="txtCode" class="form-control" />
                             </td>
+                        </tr>
+                        <tr class="row">
                             <td class="col-sm-8">
-                                Name :
+                                Port Name :
                                 <input type="text" id="txtName" class="form-control" />
                             </td>
+                        </tr>
+                        <tr class="row">
+                            <td class="col-sm-8">
+                                Country :
+                                <select id="selCountry" class="form-control dropdown"></select>
+                            </td>
+                        </tr>
+                        <tr class="row">
                             <td class="col-sm-2">
                                 <br />
                                 <button id="btnSave" class="btn btn-success" type="submit" value="submit" onclick="saveData()">Save</button>

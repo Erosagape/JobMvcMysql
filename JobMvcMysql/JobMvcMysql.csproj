@@ -177,6 +177,8 @@
     <Content Include="Scripts\DataTables\jQuery-2.2.4\jquery-2.2.4.js" />
     <Content Include="Scripts\DataTables\jQuery-2.2.4\jquery-2.2.4.min.js" />
     <Content Include="Views\CustomsFile\Country.cshtml" />
+    <Content Include="Views\CustomsFile\Currency.cshtml" />
+    <Content Include="Views\CustomsFile\InterPort.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Global.asax.cs">
@@ -190,10 +192,54 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Models\CustomsFiles.cs" />
+    <Compile Include="Models\CountryCurrency.cs" />
     <Compile Include="DataLayer\Connection.cs" />
     <Compile Include="Controllers\CustomsFileController.cs" />
     <Compile Include="Models\DecInvoice_Detail.cs" />
+    <Compile Include="Models\Decinvoice_Header.cs" />
+    <Compile Include="Models\Declare_Header.cs" />
+    <Compile Include="Models\Declare_Detail.cs" />
+    <Compile Include="Models\DecInvoice_ItmOther.cs" />
+    <Compile Include="Models\DecInvoice_Permit.cs" />
+    <Compile Include="Models\Declare_Deposit.cs" />
+    <Compile Include="Models\Declare_Duty.cs" />
+    <Compile Include="Models\Declare_Remark.cs" />
+    <Compile Include="Models\Declare_Permit.cs" />
+    <Compile Include="Models\CustomsError.cs" />
+    <Compile Include="Models\Customs_SumSize.cs" />
+    <Compile Include="Models\Customs_Response_BillLog.cs" />
+    <Compile Include="Models\Customs_Response_Data.cs" />
+    <Compile Include="Models\Customs_Response-1.cs" />
+    <Compile Include="Models\Customs_Response.cs" />
+    <Compile Include="Models\Customs_04.cs" />
+    <Compile Include="Models\Customs_03.cs" />
+    <Compile Include="Models\Customs_02.cs" />
+    <Compile Include="Models\CurrencyCode.cs" />
+    <Compile Include="Models\ConsignTo.cs" />
+    <Compile Include="Models\Consignee.cs" />
+    <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\CompAccess.cs" />
+    <Compile Include="Models\Broker.cs" />
+    <Compile Include="Models\CFlag.cs" />
+    <Compile Include="Models\Branch.cs" />
+    <Compile Include="Models\BookAccount.cs" />
+    <Compile Include="Models\BankCode.cs" />
+    <Compile Include="Models\ATM_ItemList.cs" />
+    <Compile Include="Models\MasProduct.cs" />
+    <Compile Include="Models\News.cs" />
+    <Compile Include="Models\ProductPermit.cs" />
+    <Compile Include="Models\ProvinceSub.cs" />
+    <Compile Include="Models\Province.cs" />
+    <Compile Include="Models\Reference_Table.cs" />
+    <Compile Include="Models\ReferenceBuffer.cs" />
+    <Compile Include="Models\MasCustoms.cs" />
+    <Compile Include="Models\MasCtnOperator.cs" />
+    <Compile Include="Models\MasAuthority.cs" />
+    <Compile Include="Models\Manager.cs" />
+    <Compile Include="Models\HistoryLog.cs" />
+    <Compile Include="Models\GoodCtl_Header.cs" />
+    <Compile Include="Models\GoodCtl_Detail.cs" />
+    <Compile Include="Models\Employee_master.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Scripts\jquery-3.1.1.slim.min.map" />

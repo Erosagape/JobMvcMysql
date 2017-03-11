@@ -188,7 +188,7 @@ namespace JobMvcMysql
 							WeightPerUnit = rd.GetDouble("WeightPerUnit"),
 							WeightPerPack = rd.GetDouble("WeightPerPack"),
 							SalesPackAddQty = rd.GetDouble("SalesPackAddQty"),
-							PackAddAmount = rd.GetDouble("PackAddAmount")
+							PackAddAmount = rd.GetDouble("PackAddAmount")							                  
 						});
 					}
 					rd.Close();
@@ -314,6 +314,7 @@ namespace JobMvcMysql
 				}
 			}
 		}
+
 		public string delete(string oid)
 		{
 			string msg = "Delete Success";
