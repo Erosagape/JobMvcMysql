@@ -7,12 +7,12 @@
     <title>@ViewBag.Title</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="/../Content/bootstrap.min.css">
-    <link rel="stylesheet" href="/../Scripts/DataTables/datatables.min.css" />
-    <script src="/../Scripts/DataTables/jQuery-2.2.4/jquery-2.2.4.min.js"></script>
-    <script src="/../Scripts/DataTables/datatables.min.js"></script>
-    <script src="/../Scripts/bootstrap.js"></script>
-    <script src="/../Scripts/bootbox.js"></script>
+	<link rel="stylesheet" href="~/Content/bootstrap.min.css">
+	<link rel="stylesheet" href="~/Scripts/DataTables/datatables.min.css" />
+	<script src="~/Scripts/DataTables/jQuery-2.2.4/jquery-2.2.4.min.js"></script>
+	<script src="~/Scripts/DataTables/datatables.min.js"></script>
+	<script src="~/Scripts/bootstrap.js"></script>
+	<script src="~/Scripts/bootbox.js"></script>
     <script type="text/javascript">
         //กำหนดตัวแปรเก็บ path ของ web service ไว้ call ใน page นี้
         var path='@Url.Content("~")';
@@ -62,8 +62,9 @@
                         "data": null,
                         "render": function (data, type, full, meta) {
                             var html = "<select id='selMenu' class='form-control dropdown'>";
-                            html += "<option value='0'>Currency</option>";
-                            html += "<option value='1'>Port</option></select>";
+                             html += "<option value='0'>-Go To-</option>";
+                             html += "<option value='1'>Currency</option>";
+                             html += "<option value='2'>Port</option></select>";
                             return html;
                         }
                     },
@@ -84,7 +85,15 @@
             $('#tbl tbody').on('change', '#selMenu', function () {
                 var dt = getRowData('#tbl', this);
                 var val = $(this).val();
-                bootbox.alert('you select ' + val + ' of ' + dt.countryCode);
+                switch(val)
+                {
+                     case "1":
+                         location.href = '@Url.Content("~")CustomsFile/Currency';
+                         break;
+                     case "2":
+                         location.href = '@Url.Content("~")CustomsFile/InterPort';
+ 						 break;
+                }
             });
 
         }
