@@ -6,19 +6,19 @@ using System.Web.Mvc;
 
 namespace JobMvcMysql.Controllers
 {
-    public class CustomsFileController : Controller
-    {
-        public ActionResult Index()
-        {
+	public class CustomsFileController : Controller
+	{
+		public ActionResult Index()
+		{
 			ViewBag.Title = "Country";
 			var data = new Country();
 			var model = data.get().ToList();
 			return View(model);
-        }
+		}
 		public ActionResult Country()
 		{
 			ViewBag.Title = "Country Management";
-			return View();			
+			return View();
 		}
 		public ActionResult getCountry()
 		{
@@ -26,9 +26,9 @@ namespace JobMvcMysql.Controllers
 			var model = data.get();
 			return Json(model.ToList(), JsonRequestBehavior.AllowGet);
 		}
-		public ActionResult setCountry(Country data) 
+		public ActionResult setCountry(Country data)
 		{
-			string msg =data.save();
+			string msg = data.save();
 			return Content(msg);
 		}
 		public ActionResult deleteCountry(int oid)
@@ -36,7 +36,7 @@ namespace JobMvcMysql.Controllers
 			var data = new Country();
 			return Content(data.delete(oid));
 		}
-public ActionResult Currency()
+		public ActionResult Currency()
 		{
 			ViewBag.Title = "Currency Management";
 			return View();
@@ -82,5 +82,5 @@ public ActionResult Currency()
 			var data = new InterPort();
 			return Content(data.delete(oid));
 		}
-    }
+	}
 }
